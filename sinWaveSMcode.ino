@@ -3,10 +3,12 @@ const int stepPin = 5;
 const int dirPin = 2; 
 const int enPin = 8;
 
+float val = 0;
+
 //const float Pi = 3.14159; 
 //const float oneDegtoRad = Pi/180;
 
-const int angle_toMove = 60;
+const int angle_toMove = 30;
 const double Nema23constAng = 0.9;        //0.9 degrees step 
 const int microStep = 8;
 
@@ -19,7 +21,9 @@ void steerRight(int moveAngle){
     delayMicroseconds(100); 
     digitalWrite(stepPin,LOW); 
     delayMicroseconds(100); 
-    Serial.print("Steering Right!!");
+//    Serial.print("Steering Right!! \n");
+    Serial.print(val);
+    val++;
  }
 }
 
@@ -27,12 +31,14 @@ void steerLeft(int moveAngle){
   //Left
   digitalWrite(dirPin,LOW); // Enables the motor to move in a particular direction
 
-  for(int x = 0; x < (microStep * (moveAngle/Nema23constAng)) ; x++){
+  for(int y = 0; y < (microStep * (moveAngle/Nema23constAng)) ; y++){
     digitalWrite(stepPin,HIGH); 
-    delayMicroseconds(100); 
+    delayMicroseconds(10); 
     digitalWrite(stepPin,LOW); 
-    delayMicroseconds(100); 
-    Serial.print("Steering left!!");
+    delayMicroseconds(10); 
+//    Serial.print("Steering left!! \n");
+    Serial.print(val);
+    val--;
  }
 }
 
@@ -47,12 +53,9 @@ void setup() {
 }
 
 void loop() {
-  delay(1000); // One second delay
   steerLeft(angle_toMove);
   steerRight(angle_toMove);       //steering back to same position
-
-  delay(1000); // One second delay
-
+  delay(10); // One second delay
   steerRight(angle_toMove);
   steerLeft(angle_toMove);
   delay(1000); // One second delay
