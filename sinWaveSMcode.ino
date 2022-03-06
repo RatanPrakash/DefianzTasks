@@ -21,8 +21,8 @@ void steerRight(int moveAngle){
     delayMicroseconds(100); 
     digitalWrite(stepPin,LOW); 
     delayMicroseconds(100); 
-//    Serial.print("Steering Right!! \n");
-    Serial.print(val);
+    Serial.print("Steering Right!! \n");
+    Serial.println(val);
     val++;
  }
 }
@@ -36,8 +36,8 @@ void steerLeft(int moveAngle){
     delayMicroseconds(10); 
     digitalWrite(stepPin,LOW); 
     delayMicroseconds(10); 
-//    Serial.print("Steering left!! \n");
-    Serial.print(val);
+    Serial.print("Steering left!! \n");
+    Serial.println(val);
     val--;
  }
 }
