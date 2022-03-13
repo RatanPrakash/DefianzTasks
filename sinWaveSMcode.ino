@@ -3,45 +3,39 @@ const int stepPin = 5;
 const int dirPin = 2; 
 const int enPin = 8;
 
-float val = 0;
 
-//const float Pi = 3.14159; 
-//const float oneDegtoRad = Pi/180;
+// +ve for right and -ve for left side in angles 
+float curr_angle = 0; // current steer state of wheels 
+float target_angle = 0;  // target angle to achieve by steering the wheels (Publishes by ros topics)
 
-const int angle_toMove = 30;
-const double Nema23constAng = 0.9;        //0.9 degrees step 
+// for conversion from deg to radians
+const float Pi = 3.14159; 
+const float oneDegtoRad = Pi/180;
+
+
+// some important constants for running the Stepper Motor
+const float Nema23constAng = 0.9;        //0.9 degrees step 
 const int microStep = 8;
 
-void steerRight(int moveAngle){
-  //Right
-  digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction
 
-  for(int x = 0; x < (microStep * (moveAngle/Nema23constAng)) ; x++){
+void steer(int target_angle = 0){
+  float steerAngle = target_angle - curr_angle; // difference of the current and target angle that needs to be executed. 
+  
+  if (steerAngle >= 0){
+    digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction (Right)
+  }
+  else {
+    digitalWrite(dirPin, LOW); // (Left)
+  }
+    
+  for(int x = 0; x < (microStep * (steerAngle/Nema23constAng)) ; x++){
     digitalWrite(stepPin,HIGH); 
     delayMicroseconds(100); 
     digitalWrite(stepPin,LOW); 
     delayMicroseconds(100); 
-    Serial.print("Steering Right!! \n");
-    Serial.println(val);
-    val++;
  }
+ curr_angle = target_angle; //setting the current angle to the Angle just steered...
 }
-
-void steerLeft(int moveAngle){
-  //Left
-  digitalWrite(dirPin,LOW); // Enables the motor to move in a particular direction
-
-  for(int y = 0; y < (microStep * (moveAngle/Nema23constAng)) ; y++){
-    digitalWrite(stepPin,HIGH); 
-    delayMicroseconds(10); 
-    digitalWrite(stepPin,LOW); 
-    delayMicroseconds(10); 
-    Serial.print("Steering left!! \n");
-    Serial.println(val);
-    val--;
- }
-}
-
 
 void setup() {
   // Sets the two pins as Outputs
@@ -50,14 +44,19 @@ void setup() {
   pinMode(enPin,OUTPUT);
   digitalWrite(enPin,LOW);
   Serial.begin(9600);
+  
 }
 
 void loop() {
-  steerLeft(angle_toMove);
-  steerRight(angle_toMove);       //steering back to same position
-  delay(10); // One second delay
-  steerRight(angle_toMove);
-  steerLeft(angle_toMove);
-  delay(1000); // One second delay
-  
+  // put your main code here, to run repeatedly:
+
+  for(int i = 0; i <= 360; i++){
+    float Angle = sin(i * oneDegtoRad);
+    float argAngle = map(Angle * 10, -10, 10, -45.0, 45.0);    // mapping extreme values of sin function to -45/+45 
+    steer(argAngle);
+    Serial.println(curr_angle);
+    delay(12);
+
+  }
+
 }
