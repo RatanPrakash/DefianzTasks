@@ -15,7 +15,7 @@ const float oneDegtoRad = Pi/180;
 
 // some important constants for running the Stepper Motor
 const float Nema23constAng = 0.9;        //0.9 degrees step 
-const int microStep = 8;
+const int microStep = 8;                 //from microstep driver settings
 
 
 void steer(int target_angle = 0){
@@ -48,14 +48,12 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
   for(int i = 0; i <= 360; i++){
-    float Angle = sin(i * oneDegtoRad);
+    float Angle = sin(i * oneDegtoRad);                        //using sin func by converting angles to radian
     float argAngle = map(Angle * 10, -10, 10, -45.0, 45.0);    // mapping extreme values of sin function to -45/+45 
-    steer(argAngle);
-    Serial.println(curr_angle);
-    delay(12);
+    steer(argAngle);                                           // steering the wheels to the angle mapped 
+    Serial.println(curr_angle);                                //printing current angle of wheels to Plotter/Monitor
+    delay(125);
 
   }
 
