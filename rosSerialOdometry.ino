@@ -4,7 +4,12 @@
 // #include <tf/transform_broadcaster.h>         //Optional
 
 ros::NodeHandle n;
-ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
+nav_msgs::Odometry odom;
+// ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
+
+ros::Publisher odometry("/wheelOdometry", &odom);
+
+
 // tf::TransformBroadcaster odom_broadcaster;     //Optional
 
 double x = 0.0;
@@ -12,7 +17,7 @@ double y = 0.0;
 double th = 0.0;
 
 double vx = 0.0;
-double vy = -0.0;
+double vy = 0.0;
 double vth = 0.0;
 
 ros::Time current_time;
@@ -35,10 +40,11 @@ void setup()
 {
   // put your setup code here, to run once:
   n.initNode();
-  pinMode(13, OUTPUT);
+  // pinMode(13, OUTPUT);
   Serial.begin(9600);
-  pinMode(7, INPUT);
+  // pinMode(7, INPUT);
   attachInterrupt(0, revolutions, RISING);
+  n.advertise(odometry);
 }
 
 void loop()
@@ -76,7 +82,7 @@ void loop()
   // odom_broadcaster.sendTransform(odom_trans);          //OPTIONAL
 
   // next, we'll publish the odometry message over ROS
-  nav_msgs::Odometry odom;
+//   nav_msgs::Odometry odom;
   odom.header.stamp = current_time;
   odom.header.frame_id = "odom";
 
@@ -93,5 +99,5 @@ void loop()
   odom.twist.twist.angular.z = vth;
 
   // publish the message
-  odom_pub.publish(odom);
+  odometry.publish(&odom);
 }
