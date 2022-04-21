@@ -1,8 +1,17 @@
 // defines pins numbers
-const int stepPin = 5; 
-const int dirPin = 2; 
-const int enPin = 8;
 
+//gnd light green
+const int stepPin = 8; //dark green  5
+const int dirPin = 13; //black  2
+const int enPin = 12; //grey   8
+
+#define POTENTIOMETER_PIN A0
+
+//potentiometer values for extremes of steering angle
+const float left_extreme = 0; 
+const float right_extreme = 803;
+
+int max_angle = 25;    //angle span of steering both sides
 
 // +ve for right and -ve for left side in angles 
 float curr_angle = 0; // current steer state of wheels 
@@ -52,12 +61,18 @@ void setup() {
 void loop() {
   
   for(int i = 0; i <= 360; i++){
-    float Angle = sin(i * oneDegtoRad);                        //using sin func by converting angles to radian
-    float argAngle = map(Angle * 10, -10, 10, -30, 30);    // mapping extreme values of sin function to -45/+45 
-    steer(argAngle);                                           // steering the wheels to the angle mapped 
-                                   //printing current angle of wheels to Plotter/Monitor
+    float Angle = sin(i * oneDegtoRad);                    //using sin func by converting angles to radian
+    float argAngle = map(Angle * 10, -10, 10, -max_angle, max_angle);    // mapping extreme values of sin function to -45/+45 
+    steer(argAngle);                                       // steering the wheels to the angle mapped 
     delay(1);
+
+    int pot_val = analogRead(POTENTIOMETER_PIN);
+    potCurr_angle = map(pot_val, left_extreme, right_extreme, -max_angle, max_angle);
+    Serial.print("\n Current Angle : ");
+    Serial.print(potCurr_angle);
+    delay(10);
 
   }
 
 }
+
